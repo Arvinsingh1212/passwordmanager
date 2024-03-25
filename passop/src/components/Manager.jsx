@@ -1,4 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
 
 const Manager = () => {
   const ref = useRef();
@@ -11,6 +14,20 @@ const Manager = () => {
       setPasswordArray(JSON.parse(passwords));
     }
   }, []);
+  const copyText = (text) => {
+    toast("🦄 copied to clipboard "+text, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      
+    });
+    navigator.clipboard.writeText(text)
+  };
 
   const showPassword = () => {
     const passwordInput = document.getElementById("passwordInput");
@@ -24,6 +41,17 @@ const Manager = () => {
   };
 
   const savePassword = () => {
+    toast.success('Password Added', {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      
+      });
     setPasswordArray([...passwordArray, form]);
     localStorage.setItem("passwords", JSON.stringify([...passwordArray, form]));
     console.log(...passwordArray, form);
@@ -35,6 +63,21 @@ const Manager = () => {
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition="Bounce"
+      />
+      {/* Same as */}
+      <ToastContainer />
       <div className="mycontainer">
         <h1 className="text-4xl font-bold text-center">
           <span className="text-green-500">&lt;</span>
@@ -107,14 +150,52 @@ const Manager = () => {
                 {passwordArray.map((item, index) => {
                   return (
                     <tr key={index}>
-                      <td className="py-2 w-32 text-center border border-white"><a href={item.site} target='_blank'></a>
+                      <td className=" flex item-center justify-center py-2  text-center border border-white">
+                        <a href={item.site} target="_blank"></a>
                         {item.site}
+                        <div
+                          onClick={() => {
+                            copyText(item.site);
+                          }}
+                        >
+                          <img
+                            className=" h-5 cursor-pointer ml-5 mt-1"
+                            src="copy.svg"
+                            alt=""
+                          />
+                        </div>
                       </td>
-                      <td className="py-2 w-32 text-center border border-white">
-                        {item.username}
+                      <td className="px-4 py-2 w-40 text-center border border-white">
+                        <div className="flex item-center justify-between mr-1">
+                          <span>{item.username}</span>
+                          <div
+                            onClick={() => {
+                              copyText(item.username);
+                            }}
+                          >
+                            <img
+                              className=" h-5 cursor-pointer ml-5 mt-1"
+                              src="copy.svg"
+                              alt=""
+                            />
+                          </div>
+                        </div>
                       </td>
-                      <td className="py-2 w-32 text-center border border-white">
-                        {item.password}
+                      <td className=" px-2 py-2 w-40  text-center border border-white">
+                        <div className="flex item-center justify-between mr-2 ">
+                          <span>{item.password}</span>
+                          <div
+                            onClick={() => {
+                              copyText(item.password);
+                            }}
+                          >
+                            <img
+                              className=" h-5 cursor-pointer ml-5 mt-1"
+                              src="copy.svg"
+                              alt=""
+                            />
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   );
