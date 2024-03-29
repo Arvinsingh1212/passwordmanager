@@ -11,7 +11,7 @@ const Navbar = () => {
           <span className="text-green-500">OP/&gt;</span>
         </div>
         <ul>
-          <button className="text-white bg-green-700 my-5 mx-2 rounded-full flex justify-between item-center">
+          <button className="text-white bg-green-700 my-5 mx-2 rounded-full flex justify-between item-center ring-white ring-1">
             <img className=' invert w-10 p-1'src="github.svg" alt="github logo" />
             <span className='font-bold px-2 py-2'>Github</span>
           </button>
