@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const Manager = () => {
   const ref = useRef();
-  const [form, setForm] = useState({ site: "", username: "", password: "" });
+  const [form, setform] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setPasswordArray] = useState([]);
 
   const getPasswords = async() => {
@@ -50,44 +50,41 @@ const Manager = () => {
     }
   };
 
-  const savePassword = () => {
-    if(form.site.length >3 && form.username.length >3 &&form.password.length >3){
-    
-    setPasswordArray([...passwordArray,{...form,id: uuidv4()}]);
-    localStorage.setItem("passwords", JSON.stringify([...passwordArray,{...form,id:uuidv4()}]));
-    console.log(...passwordArray, form);
-    setForm({ site: "", username: "", password: "" })
-    toast("password saved successfully", {
-      position: "top-center",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
+  const savePassword = async () => {
+    if(form.site.length > 3 && form.username.length > 3 && form.password.length > 3){
       
-    });
+      //if any such id exists in the db,delete it
+      await fetch("http://localhost:3000/",{method: "DELETE",headers: {"Content-Type": "application/json"},body: JSON.stringify({id: form.id })})
+
+
+      setPasswordArray([...passwordArray,{...form,id: uuidv4()}]);
+      await fetch("http://localhost:3000/",{method: "POST",headers: {"Content-Type": "application/json"},body: JSON.stringify({ ...form,id: uuidv4() })})
+      // localStorage.setItem("passwords", JSON.stringify([...passwordArray,{...form,id:uuidv4()}]));
+      // console.log(...passwordArray, form);
+      setform({ site: "", username: "", password: "" })
+      
     }
   };
 
-  const deletePassword = (id) => {
+  const deletePassword = async (id) => {
    console.log("deleteing password with id",id)
-    let c= confirm("do you really want t delete this password?")
+    let c = confirm("do you really want to delete this password?")
     if(c){
-      setPasswordArray(passwordArray.filter(item=>item.id!==id))
-      localStorage.setItem("passwors",JSON.stringify(passwordArray.filter(item=>item.id!==id)))
+      setPasswordArray(passwordArray.filter(item => item.id!==id))
+      // localStorage.setItem("passwords",JSON.stringify(passwordArray.filter(item=>item.id!==id)))
+      let res = await fetch("http://localhost:3000/",{method: "DELETE",headers: {"Content-Type": "application/json"},body: JSON.stringify({id })})
+
     }
   };
 
   const editPassword = (id) => {
     console.log("editing password with id",id)
-     setForm(passwordArray.filter(i=>i.id===id)[0])
+     setform({...passwordArray.filter(i=>i.id===id)[0],id: id})
      setPasswordArray(passwordArray.filter(item=>item.id!==id))
    };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setform({ ...form, [e.target.name]: e.target.value });
   };
 
   return (
@@ -213,7 +210,7 @@ const Manager = () => {
                       </td>
                       <td className=" px-2 py-2 w-40  text-center border border-white">
                         <div className="flex item-center justify-between mr-2 ">
-                          <span>{item.password}</span>
+                          <span>{"*".repeat(item.password.length)}</span>
                           <div
                             onClick={() => {
                               copyText(item.password);
